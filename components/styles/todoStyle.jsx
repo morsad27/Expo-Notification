@@ -2,8 +2,9 @@ import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
   icon: {
-    height: 33,
-    width: 33,
+    height: 24,
+    width: 24,
+    marginRight: 10,
   },
   container: {
     flex: 1,
@@ -16,13 +17,13 @@ export const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    borderColor: "#dcdcdc",
     borderWidth: 1,
+    borderColor: "#000",
     paddingHorizontal: 15,
-    paddingVertical: 10,
     fontSize: 16,
     backgroundColor: "#fff",
     color: "#333",
+    borderRadius: 10,
   },
   addButton: {
     backgroundColor: "#06f",
@@ -49,6 +50,7 @@ export const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.5,
     shadowRadius: 5,
+    shadowColor: "#000",
   },
   todoText: {
     flex: 1,

@@ -16,6 +16,7 @@ import CalendarPicker from "react-native-calendar-picker";
 import { TimePickerModal } from "react-native-paper-dates";
 import * as Notifications from "expo-notifications";
 import { styles } from "../../components/styles/addreminderStyles";
+import { useFocusEffect } from "@react-navigation/native";
 
 const Index = ({ showAddReminder = true }) => {
   const [title, setTitle] = useState("");
@@ -28,6 +29,41 @@ const Index = ({ showAddReminder = true }) => {
   const [isCalendarVisible, setIsCalendarVisible] = useState(false);
   const [time, setTime] = useState({ hours: 0, minutes: 0 });
   const [editingText, setEditingText] = useState("");
+  
+  const [todoList, setTodoList] = useState([]);
+
+  //load to-do list
+  const loadTodoList = async () => {
+    try {
+      const storedList = await AsyncStorage.getItem("TodoList");
+      if (storedList !== null) {
+        setTodoList(JSON.parse(storedList));
+      }
+    } catch (err) {
+      console.error("Error loading to-do list:", err);
+    }
+  };
+
+  //load reminders
+  const fetchReminders = async () => {
+    try {
+      const storedReminders = await AsyncStorage.getItem("reminders");
+      if (storedReminders) {
+        setReminders(JSON.parse(storedReminders));
+      }
+    } catch (error) {
+      console.error("Error fetching reminders:", error);
+    }
+  };
+
+  // auto reload data
+  useFocusEffect(
+    React.useCallback(() => {
+      loadTodoList();
+      fetchReminders();
+    }, [])
+  );
+
 
   useEffect(() => {
     const requestPermissions = async () => {

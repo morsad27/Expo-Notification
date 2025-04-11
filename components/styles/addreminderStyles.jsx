@@ -51,6 +51,7 @@ export const styles = StyleSheet.create({
     marginRight: 10,
   },
   inputField: {
+    borderWidth: 1,
     flex: 1,
     fontSize: 16,
     color: "#333",

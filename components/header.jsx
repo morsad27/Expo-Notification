@@ -3,14 +3,14 @@ import React, { useContext, useEffect, useState } from "react";
 import styles from "./styles/headerStyles";
 import { ReminderContext } from "../constant/reminderContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useFocusEffect } from "@react-navigation/native"; // Import focus effect
+import { useFocusEffect } from "@react-navigation/native";
 
 const Header = () => {
-  const { reminderList } = useContext(ReminderContext);
+  // const { reminderList } = useContext(ReminderContext);
   const [reminders, setReminders] = useState([]);
   const [todoList, setTodoList] = useState([]);
 
-  // Function to load to-do list
+  //load to-do list
   const loadTodoList = async () => {
     try {
       const storedList = await AsyncStorage.getItem("TodoList");
@@ -22,7 +22,7 @@ const Header = () => {
     }
   };
 
-  // Function to load reminders
+  //load reminders
   const fetchReminders = async () => {
     try {
       const storedReminders = await AsyncStorage.getItem("reminders");
@@ -34,7 +34,7 @@ const Header = () => {
     }
   };
 
-  // Reload data when screen comes into focus
+  // auto reload data
   useFocusEffect(
     React.useCallback(() => {
       loadTodoList();
