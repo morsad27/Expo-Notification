@@ -284,7 +284,7 @@ const Index = ({
               style={styles.closeButton}
               onPress={() => setIsCalendarVisible(false)}
             >
-              <Text>Close</Text>
+              <Text style={{color: "#fff"}}>Close</Text>
             </Pressable>
           </View>
         </View>

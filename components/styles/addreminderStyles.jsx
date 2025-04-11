@@ -87,7 +87,7 @@ export const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 10,
     alignItems: "center",
-    width: "90%",
+    width: "95%",
   },
   closeButton: {
     marginTop: 10,
