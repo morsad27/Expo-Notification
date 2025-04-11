@@ -29,7 +29,7 @@ const Index = ({ showAddReminder = true }) => {
   const [isCalendarVisible, setIsCalendarVisible] = useState(false);
   const [time, setTime] = useState({ hours: 0, minutes: 0 });
   const [editingText, setEditingText] = useState("");
-  
+
   const [todoList, setTodoList] = useState([]);
 
   //load to-do list
@@ -63,7 +63,6 @@ const Index = ({ showAddReminder = true }) => {
       fetchReminders();
     }, [])
   );
-
 
   useEffect(() => {
     const requestPermissions = async () => {
@@ -239,15 +238,18 @@ const Index = ({ showAddReminder = true }) => {
                 {item.title}
               </Text>
             )}
-            <Pressable
-              style={styles.deleteButton}
-              onPress={() => deleteReminder(index)}
-            >
-              <Image
-                source={require("../../assets/images/removeicon.png")}
-                style={styles.icon}
-              />
-            </Pressable>
+
+            {showAddReminder && (
+              <Pressable
+                style={styles.deleteButton}
+                onPress={() => deleteReminder(index)}
+              >
+                <Image
+                  source={require("../../assets/images/removeicon.png")}
+                  style={styles.icon}
+                />
+              </Pressable>
+            )}
           </View>
         )}
       />

@@ -131,12 +131,14 @@ const Todo = ({ showAddButton = true }) => {
               </Text>
             )}
 
-            <Pressable onPress={() => removeTodo(item.id)}>
-              <Image
-                source={require("../../assets/images/removeicon.png")}
-                style={styles.icon}
-              />
-            </Pressable>
+            {showAddButton && (
+              <Pressable onPress={() => removeTodo(item.id)}>
+                <Image
+                  source={require("../../assets/images/removeicon.png")}
+                  style={styles.icon}
+                />
+              </Pressable>
+            )}
           </View>
         )}
         keyExtractor={(item) => item.id.toString()}

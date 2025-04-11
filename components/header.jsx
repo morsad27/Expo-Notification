@@ -1,7 +1,6 @@
 import { Text, View } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import styles from "./styles/headerStyles";
-import { ReminderContext } from "../constant/reminderContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 
@@ -57,7 +56,7 @@ const Header = () => {
         </View>
       </View>
       <Text style={styles.bottomText}>
-        Lorem ipsum 
+        Your daily reminder partner
       </Text>
     </View>
   );
