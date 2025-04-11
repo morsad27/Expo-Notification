@@ -102,6 +102,7 @@ export const styles = StyleSheet.create({
   },
   
   reminderItem: {
+    borderWidth: 1,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",

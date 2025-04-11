@@ -5,10 +5,11 @@ const windowwidth = Dimensions.get("screen").width;
 // const windowheight = Dimensions.get("screen").height;
 
 const isTablet = windowwidth > 600;
-const isNokia = windowwidth < 390; 
+const isNokia = windowwidth < 390;
 
 const styles = StyleSheet.create({
   container: {
+    borderWidth: 1,
     paddingTop: "10%",
     alignItems: "center",
     backgroundColor: "#06f",
@@ -35,7 +36,7 @@ const styles = StyleSheet.create({
     width: isNokia ? 130 : isTablet ? 180 : 160,
     borderWidth: 2,
     borderColor: "#fff",
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   text: {
     fontSize: isNokia ? 34 : isTablet ? 38 : 36,
@@ -49,12 +50,13 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     color: "#fff",
   },
-  bottomText:{
+  bottomText: {
+    paddingTop: 10,
     fontSize: isNokia ? 16 : isTablet ? 20 : 18,
     alignSelf: "center",
     fontWeight: "500",
     color: "#fff",
-  }
+  },
 });
 
 export default styles;
