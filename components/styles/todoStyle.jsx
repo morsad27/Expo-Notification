@@ -16,6 +16,7 @@ export const styles = StyleSheet.create({
     padding: 10,
   },
   input: {
+    minHeight: 55,
     flex: 1,
     borderWidth: 1,
     borderColor: "#000",
@@ -48,7 +49,6 @@ export const styles = StyleSheet.create({
     borderRadius: 8,
     marginVertical: 5,
     marginHorizontal: 10,
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.5,
     shadowRadius: 5,
