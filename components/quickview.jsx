@@ -6,7 +6,7 @@ const QuickView = ({ selectedCapsule }) => {
 
   return (
     <>
-      {selectedCapsule === "Reminders" && <Reminders showAddReminder={false} />}
+      {selectedCapsule === "Reminders" && <Reminders showAddReminder={false} showdelete={false} />}
       {selectedCapsule === "To-Dos" && <Todo showAddButton={false} />}
     </>
   );

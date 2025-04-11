@@ -9,7 +9,6 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    padding: 5,
   },
   inputContainer: {
     flexDirection: "row",
@@ -25,6 +24,14 @@ export const styles = StyleSheet.create({
     backgroundColor: "#fff",
     color: "#333",
     borderRadius: 10,
+  },
+  inputEdit: {
+    minHeight: 35,
+    borderColor: "#000",
+    fontSize: 16,
+    backgroundColor: "#06f",
+    color: "#fff",
+    margin: -10,
   },
   addButton: {
     backgroundColor: "#06f",

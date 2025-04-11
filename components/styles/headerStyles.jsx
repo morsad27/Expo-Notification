@@ -17,6 +17,10 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: isNokia ? 20 : isTablet ? 40 : 30,
     paddingBottom: 20,
   },
+  row:{
+    display: 'flex',
+    flexDirection: 'row',
+  },  
   logoText: {
     fontSize: isNokia ? 22 : isTablet ? 30 : 26,
     fontWeight: "bold",

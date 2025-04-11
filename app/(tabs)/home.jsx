@@ -57,6 +57,7 @@ const Home = () => {
             </TouchableOpacity>
           </View>
 
+            <Text style={styles.center}>{selectedCapsule}:</Text>
           {/* QuickView Component */}
           <QuickView selectedCapsule={selectedCapsule} />
         </SafeAreaView>

@@ -107,7 +107,7 @@ const Todo = ({ showAddButton = true }) => {
           <View style={styles.todoItem}>
             {item.id === editingId ? (
               <TextInput
-                style={styles.input}
+                style={styles.inputEdit}
                 value={editingText}
                 onChangeText={(text) => setEditingText(text)}
                 onBlur={() => {
@@ -121,8 +121,8 @@ const Todo = ({ showAddButton = true }) => {
                   styles.todoText,
                   item.completed && styles.completedText,
                 ]}
-                // onPress={() => toggleTodo(item.id)}
-                onPress={() => {
+                onPress={() => toggleTodo(item.id)}
+                onLongPress={() => {
                   setEditingId(item.id);
                   setEditingText(item.text);
                 }}

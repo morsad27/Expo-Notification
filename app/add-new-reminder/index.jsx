@@ -18,7 +18,11 @@ import * as Notifications from "expo-notifications";
 import { styles } from "../../components/styles/addreminderStyles";
 import { useFocusEffect } from "@react-navigation/native";
 
-const Index = ({ showAddReminder = true }) => {
+const Index = ({
+  showAddReminder = true,
+  showlist = false,
+  showdelete = true,
+}) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [selectedDate, setSelectedDate] = useState("Select Date");
@@ -213,46 +217,59 @@ const Index = ({ showAddReminder = true }) => {
       )}
 
       {/* reminder list */}
-      <FlatList
-        data={reminders}
-        renderItem={({ item, index }) => (
-          <View style={styles.reminderItem}>
-            {item.id === editingId ? (
-              <TextInput
-                style={styles.input}
-                value={editingText}
-                onChangeText={(text) => setEditingText(text)}
-                onBlur={() => {
-                  editReminder(item.id, editingText);
-                  setEditingId(null);
-                }}
-              />
-            ) : (
-              <Text
-                style={styles.reminderTitle}
-                onPress={() => {
-                  setEditingId(item.id);
-                  setEditingText(item.text);
-                }}
-              >
-                {item.title}
-              </Text>
-            )}
-
-            {showAddReminder && (
-              <Pressable
-                style={styles.deleteButton}
-                onPress={() => deleteReminder(index)}
-              >
-                <Image
-                  source={require("../../assets/images/removeicon.png")}
-                  style={styles.icon}
+      {showlist && (
+        <View style={styles.padbot}>
+          <FlatList
+            data={reminders}
+            renderItem={({ item, index }) => (
+              <View style={styles.reminderItem}>
+                {/* {item.id === editingId ? (
+                <TextInput
+                  style={styles.input}
+                  value={editingText}
+                  onChangeText={(text) => setEditingText(text)}
+                  onBlur={() => {
+                    editReminder(item.id, editingText);
+                    setEditingId(null);
+                  }}
                 />
-              </Pressable>
+              ) : ( */}
+                <View>
+                  <Text
+                    style={styles.reminderTitle}
+                    onPress={() => {
+                      setEditingId(item.id);
+                      setEditingText(item.text);
+                    }}
+                  >
+                    {item.title}
+                  </Text>
+
+                  <View>
+                    <Text>
+                      🕒{item.time} {"\n"}
+                      🗓️ {item.date}
+                    </Text>
+                  </View>
+                </View>
+                {/* )} */}
+
+                {showdelete && (
+                  <Pressable
+                    style={styles.deleteButton}
+                    onPress={() => deleteReminder(index)}
+                  >
+                    <Image
+                      source={require("../../assets/images/removeicon.png")}
+                      style={styles.icon}
+                    />
+                  </Pressable>
+                )}
+              </View>
             )}
-          </View>
-        )}
-      />
+          />
+        </View>
+      )}
 
       {/* Calendar modal */}
       <Modal visible={isCalendarVisible} transparent animationType="fade">

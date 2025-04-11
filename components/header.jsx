@@ -3,6 +3,7 @@ import React, { useContext, useEffect, useState } from "react";
 import styles from "./styles/headerStyles";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
 
 const Header = () => {
   // const { reminderList } = useContext(ReminderContext);
@@ -43,7 +44,10 @@ const Header = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.logoText}>Re:Mind</Text>
+      <View style={styles.row}>
+        <Ionicons name="notifications" size={35} color="white" />
+        <Text style={styles.logoText}>Re:Mind</Text>
+      </View>
       <View style={styles.circleRow}>
         <View style={styles.circle}>
           <Text style={styles.text}>{reminders.length}</Text>
@@ -55,9 +59,7 @@ const Header = () => {
           <Text style={styles.textTitle}>To-Do</Text>
         </View>
       </View>
-      <Text style={styles.bottomText}>
-        Your daily reminder partner
-      </Text>
+      <Text style={styles.bottomText}>Lorem ipsum is a dummy text</Text>
     </View>
   );
 };

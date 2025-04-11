@@ -120,5 +120,9 @@ export const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     color: "#000",
+    fontWeight: '500'
   },
+  padbot:{
+    paddingBottom: "30%",
+  }
 });

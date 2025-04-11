@@ -4,7 +4,7 @@ import { Link } from "expo-router";
 import { styles } from "../../components/styles/reminderStyle";
 import Reminders from "../../app/add-new-reminder/index";
 
-const reminder = ({ showAddReminder = true}) => {
+const reminder = ({ showAddReminder = true }) => {
   return (
     <SafeAreaView style={styles.container}>
       {showAddReminder && (
@@ -12,7 +12,7 @@ const reminder = ({ showAddReminder = true}) => {
           <Text style={styles.addButtonText}> Add new Reminder </Text>
         </Link>
       )}
-      <Reminders showAddReminder={false} />
+      <Reminders showAddReminder={false} showlist={true} showdelete={false}/>
     </SafeAreaView>
   );
 };
