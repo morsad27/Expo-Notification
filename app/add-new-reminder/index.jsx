@@ -17,6 +17,7 @@ import { TimePickerModal } from "react-native-paper-dates";
 import * as Notifications from "expo-notifications";
 import { styles } from "../../components/styles/addreminderStyles";
 import { useFocusEffect } from "@react-navigation/native";
+import { v4 as uuidv4 } from 'uuid';
 
 const Index = ({
   showAddReminder = true,
@@ -96,7 +97,7 @@ const Index = ({
     await Notifications.scheduleNotificationAsync({
       content: {
         title: `Remember: ${title}`,
-        body:  {description},
+        body:  description,
       },
       trigger: scheduledDate,
     });
@@ -122,6 +123,7 @@ const Index = ({
     await scheduleExpoNotification(title, reminderDate);
 
     const newReminder = {
+      id: uuidv4(),
       title,
       description,
       date: selectedDate,
