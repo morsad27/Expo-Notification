@@ -95,8 +95,8 @@ const Index = ({
   const scheduleExpoNotification = async (title, scheduledDate) => {
     await Notifications.scheduleNotificationAsync({
       content: {
-        title: "Reminder Alert!",
-        body: `Time for: ${title}`,
+        title: `Remember: ${title}`,
+        body:  {description},
       },
       trigger: scheduledDate,
     });
