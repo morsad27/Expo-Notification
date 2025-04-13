@@ -124,5 +124,16 @@ export const styles = StyleSheet.create({
   },
   padbot:{
     paddingBottom: "30%",
+  },
+  editButton: {
+    padding: 6,
+    backgroundColor: "#2196F3",
+    borderRadius: 6,
+    marginLeft: 8,
+  },
+  editButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
   }
+  
 });
