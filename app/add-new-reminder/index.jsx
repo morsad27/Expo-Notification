@@ -17,13 +17,17 @@ import { TimePickerModal } from "react-native-paper-dates";
 import * as Notifications from "expo-notifications";
 import { styles } from "../../components/styles/addreminderStyles";
 import { useFocusEffect } from "@react-navigation/native";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
+import { useRouter } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 
 const Index = ({
   showAddReminder = true,
   showlist = false,
   showdelete = true,
 }) => {
+  const router = useRouter();
+
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [selectedDate, setSelectedDate] = useState("Select Date");
@@ -36,6 +40,18 @@ const Index = ({
   const [editingText, setEditingText] = useState("");
 
   const [todoList, setTodoList] = useState([]);
+
+  const params = useLocalSearchParams();
+  useEffect(() => {
+    if (params.editReminder) {
+      const reminder = JSON.parse(decodeURIComponent(params.editReminder));
+      setTitle(reminder.title);
+      setDescription(reminder.description);
+      setSelectedDate(reminder.date);
+      setSelectedTime(reminder.time);
+      setEditingId(reminder.id ?? reminder.key ?? null); // whichever identifier you're using
+    }
+  }, [params]);
 
   //load to-do list
   const loadTodoList = async () => {
@@ -97,7 +113,7 @@ const Index = ({
     await Notifications.scheduleNotificationAsync({
       content: {
         title: `Remember: ${title}`,
-        body:  description,
+        body: description,
       },
       trigger: scheduledDate,
     });
@@ -122,14 +138,22 @@ const Index = ({
 
     await scheduleExpoNotification(title, reminderDate);
 
-    const newReminder = {
-      id: uuidv4(),
-      title,
-      description,
-      date: selectedDate,
-      time: selectedTime,
-    };
-    const updatedReminders = [...reminders, newReminder];
+    let updatedReminders = [...reminders];
+    if (editingId !== null) {
+      updatedReminders = updatedReminders.map((reminder, index) =>
+        index === Number(editingId)
+          ? { title, description, date: selectedDate, time: selectedTime }
+          : reminder
+      );
+    } else {
+      updatedReminders.push({
+        title,
+        description,
+        date: selectedDate,
+        time: selectedTime,
+      });
+    }
+
     setReminders(updatedReminders);
     await AsyncStorage.setItem("reminders", JSON.stringify(updatedReminders));
 
@@ -137,6 +161,7 @@ const Index = ({
     setDescription("");
     setSelectedDate("Select Date");
     setSelectedTime("Select Time");
+    setEditingId(null);
   };
 
   const deleteReminder = async (index) => {
@@ -253,6 +278,15 @@ const Index = ({
                       🗓️ {item.date}
                     </Text>
                   </View>
+                  <Pressable
+                    style={styles.editButton}
+                    onPress={() => {
+                      const params = encodeURIComponent(JSON.stringify(item));
+                      router.push(`/add-new-reminder?editReminder=${params}`);
+                    }}
+                  >
+                    <Text style={styles.editButtonText}>Edit</Text>
+                  </Pressable>
                 </View>
                 {/* )} */}
 
@@ -286,7 +320,7 @@ const Index = ({
               style={styles.closeButton}
               onPress={() => setIsCalendarVisible(false)}
             >
-              <Text style={{color: "#fff"}}>Close</Text>
+              <Text style={{ color: "#fff" }}>Close</Text>
             </Pressable>
           </View>
         </View>
