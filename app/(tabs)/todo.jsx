@@ -1,5 +1,4 @@
 import {
-  Alert,
   FlatList,
   Image,
   Pressable,
@@ -26,37 +25,14 @@ const Todo = ({ showAddButton = true }) => {
     }
   };
 
-  // const addTodo = async () => {
-  //   if (todoText.trim()) {
-  //     const newTodo = { id: Date.now(), text: todoText.trim() };
-  //     const updatedList = [...todoList, newTodo];
-  //     setTodoList(updatedList);
-  //     setTodoText("");
-  //     await saveTodoList(updatedList);
-  //   }
-  // };
-
   const addTodo = async () => {
-
-    if (!todoText) {
-      return Alert.alert("Add To-Do Text is Blank!");
+    if (todoText.trim()) {
+      const newTodo = { id: Date.now(), text: todoText.trim() };
+      const updatedList = [...todoList, newTodo];
+      setTodoList(updatedList);
+      setTodoText("");
+      await saveTodoList(updatedList);
     }
-
-    let updatedList = [...todoList];
-    if (editingId !== null) {
-      updatedList = updatedList.map((todo, index) =>
-        index === Number(editingId) ? { todoText } : todo
-      );
-    } else {
-      updatedList.push({
-        todoText,
-      });
-    }
-
-    setTodoList(updatedList);
-    await AsyncStorage.setItem("TodoList", JSON.stringify(updatedList));
-
-    setTodoText("add to-do text again");
   };
 
   const removeTodo = async (id) => {
