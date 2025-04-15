@@ -39,6 +39,7 @@ const Index = ({
   const [isCalendarVisible, setIsCalendarVisible] = useState(false);
   const [time, setTime] = useState({ hours: 0, minutes: 0 });
   const [selectedItem, setSelectedItem] = useState(null);
+  const [isEditMode, setIsEditMode] = useState();
 
   //load reminder pag focus sa page
   useFocusEffect(
@@ -98,11 +99,12 @@ const Index = ({
         body: description,
       },
       trigger: {
-        type: 'date',
-        timestamp: scheduledDate.getTime(),}
+        type: "date",
+        timestamp: scheduledDate.getTime(),
+      },
     });
   };
-  
+
   //add or update reminder
   const addReminder = async () => {
     if (
