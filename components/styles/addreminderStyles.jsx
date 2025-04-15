@@ -65,6 +65,29 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  deleteButton: {
+    flex: 1,
+    backgroundColor: "red",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  updateButton: {
+    flex: 1,
+    backgroundColor: "green",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  row:{
+    display: 'flex',
+    flexDirection: 'row',
+    gap: 50
+  },
   addButtonText: {
     fontSize: 16,
     color: "#fff",

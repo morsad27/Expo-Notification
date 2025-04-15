@@ -9,7 +9,6 @@ import {
   Modal,
   FlatList,
   Alert,
-  Platform,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import CalendarPicker from "react-native-calendar-picker";
@@ -24,9 +23,11 @@ import { useLocalSearchParams } from "expo-router";
 const Index = ({
   showAddReminder = true,
   showlist = false,
-  showdelete = true,
+  showdelete = false,
+  showAdd = true,
 }) => {
   const router = useRouter();
+  const params = useLocalSearchParams();
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -37,36 +38,19 @@ const Index = ({
   const [editingId, setEditingId] = useState(null);
   const [isCalendarVisible, setIsCalendarVisible] = useState(false);
   const [time, setTime] = useState({ hours: 0, minutes: 0 });
-  const [editingText, setEditingText] = useState("");
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [isEditMode, setIsEditMode] = useState();
 
-  const [todoList, setTodoList] = useState([]);
+  //load reminder pag focus sa page
+  useFocusEffect(
+    React.useCallback(() => {
+      loadReminders();
+      requestPermissions();
+    }, [])
+  );
 
-  const params = useLocalSearchParams();
-  useEffect(() => {
-    if (params.editReminder) {
-      const reminder = JSON.parse(decodeURIComponent(params.editReminder));
-      setTitle(reminder.title);
-      setDescription(reminder.description);
-      setSelectedDate(reminder.date);
-      setSelectedTime(reminder.time);
-      setEditingId(reminder.id ?? reminder.key ?? null); // whichever identifier you're using
-    }
-  }, [params]);
-
-  //load to-do list
-  const loadTodoList = async () => {
-    try {
-      const storedList = await AsyncStorage.getItem("TodoList");
-      if (storedList !== null) {
-        setTodoList(JSON.parse(storedList));
-      }
-    } catch (err) {
-      console.error("Error loading to-do list:", err);
-    }
-  };
-
-  //load reminders
-  const fetchReminders = async () => {
+  //load reminders galing sa asyncstorage
+  const loadReminders = async () => {
     try {
       const storedReminders = await AsyncStorage.getItem("reminders");
       if (storedReminders) {
@@ -77,31 +61,29 @@ const Index = ({
     }
   };
 
-  // auto reload data
-  useFocusEffect(
-    React.useCallback(() => {
-      loadTodoList();
-      fetchReminders();
-    }, [])
-  );
+  //request notification permissions
+  const requestPermissions = async () => {
+    const { status } = await Notifications.getPermissionsAsync();
+    if (status !== "granted") {
+      await Notifications.requestPermissionsAsync();
+    }
+  };
 
+  //editing make the fields editable
   useEffect(() => {
-    const requestPermissions = async () => {
-      const { status } = await Notifications.getPermissionsAsync();
-      if (status !== "granted") {
-        await Notifications.requestPermissionsAsync();
-      }
-    };
-    requestPermissions();
+    if (params.editReminder) {
+      const reminder = JSON.parse(decodeURIComponent(params.editReminder));
+      setTitle(reminder.title);
+      setDescription(reminder.description);
+      setSelectedDate(reminder.date);
+      setSelectedTime(reminder.time);
+      setEditingId(reminder.id);
 
-    const fetchReminders = async () => {
-      const storedReminders = await AsyncStorage.getItem("reminders");
-      if (storedReminders) setReminders(JSON.parse(storedReminders));
-    };
+      console.log("Editing reminder ID:", reminder.id);
+    }
+  }, [params]);
 
-    fetchReminders();
-  }, []);
-
+  //date selection
   const handleDateChange = (date) => {
     setSelectedDate(
       `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`
@@ -109,16 +91,21 @@ const Index = ({
     setIsCalendarVisible(false);
   };
 
+  //scheduling Expo Notifications
   const scheduleExpoNotification = async (title, scheduledDate) => {
     await Notifications.scheduleNotificationAsync({
       content: {
         title: `Remember: ${title}`,
         body: description,
       },
-      trigger: scheduledDate,
+      trigger: {
+        type: "date",
+        timestamp: scheduledDate.getTime(),
+      },
     });
   };
 
+  //add or update reminder
   const addReminder = async () => {
     if (
       !title ||
@@ -138,20 +125,24 @@ const Index = ({
 
     await scheduleExpoNotification(title, reminderDate);
 
+    const newReminder = {
+      id: editingId || uuidv4(),
+      title,
+      description,
+      date: selectedDate,
+      time: selectedTime,
+      timestamp: reminderDate.getTime(),
+    };
+
     let updatedReminders = [...reminders];
+
     if (editingId !== null) {
-      updatedReminders = updatedReminders.map((reminder, index) =>
-        index === Number(editingId)
-          ? { title, description, date: selectedDate, time: selectedTime }
-          : reminder
+      // If we are editing, update the reminder in the list
+      updatedReminders = updatedReminders.map((reminder) =>
+        reminder.id === editingId ? newReminder : reminder
       );
     } else {
-      updatedReminders.push({
-        title,
-        description,
-        date: selectedDate,
-        time: selectedTime,
-      });
+      updatedReminders.push(newReminder);
     }
 
     setReminders(updatedReminders);
@@ -164,35 +155,28 @@ const Index = ({
     setEditingId(null);
   };
 
-  const deleteReminder = async (index) => {
-    const updatedReminders = reminders.filter((_, i) => i !== index);
+  //delete reminder
+  const deleteReminder = async (id) => {
+    if (typeof id !== "string") {
+      console.warn("Expected a string ID but got:", id);
+      return;
+    }
+    const updatedReminders = reminders.filter((item) => item.id !== id);
     setReminders(updatedReminders);
     await AsyncStorage.setItem("reminders", JSON.stringify(updatedReminders));
   };
 
+  //confirm time selection
   const onConfirmTime = ({ hours, minutes }) => {
     setTime({ hours, minutes });
     setSelectedTime(`${hours}:${minutes < 10 ? "0" + minutes : minutes}`);
     setTimeModalVisible(false);
   };
 
-  const editReminder = async (id, newText) => {
-    try {
-      const updatedReminders = reminders.map((item, index) =>
-        index === id ? { ...item, title: newText } : item
-      );
-      setReminders(updatedReminders);
-      await AsyncStorage.setItem("reminders", JSON.stringify(updatedReminders));
-    } catch (err) {
-      alert("Error updating reminder: " + err);
-    }
-  };
-
   return (
     <SafeAreaView style={styles.safeArea}>
       {showAddReminder && (
         <View style={styles.mainContainer}>
-          {/* title input */}
           <Text style={styles.text}>Title</Text>
           <TextInput
             style={styles.input}
@@ -201,7 +185,6 @@ const Index = ({
             onChangeText={setTitle}
           />
 
-          {/* description */}
           <Text style={styles.text}>Description</Text>
           <TextInput
             style={styles.multiInput}
@@ -211,7 +194,6 @@ const Index = ({
             onChangeText={setDescription}
           />
 
-          {/* date picker */}
           <Text style={styles.text}>Date</Text>
           <Pressable
             style={styles.inputWithIcon}
@@ -224,7 +206,6 @@ const Index = ({
             <Text>{selectedDate}</Text>
           </Pressable>
 
-          {/* time picker */}
           <Text style={styles.text}>Time</Text>
           <Pressable
             style={styles.inputWithIcon}
@@ -237,77 +218,74 @@ const Index = ({
             <Text>{selectedTime}</Text>
           </Pressable>
 
-          <Pressable style={styles.addButton} onPress={addReminder}>
-            <Text style={styles.addButtonText}>Add</Text>
-          </Pressable>
+          {showAdd && (
+            <Pressable style={styles.addButton} onPress={addReminder}>
+              <Text style={styles.addButtonText}>Add</Text>
+            </Pressable>
+          )}
+
+          {showdelete && (
+            <View style={styles.row}>
+              <Pressable
+                //on click it will save updated texts/changes
+                style={styles.updateButton}
+                onPress={() => deleteReminder(selectedItem.id)}
+              >
+                <Text style={styles.addButtonText}>Update</Text>
+              </Pressable>
+              <Pressable
+                //remove from list
+                style={styles.deleteButton}
+                onPress={() => {
+                  if (selectedItem) {
+                    deleteReminder(selectedItem.id);
+                  } else {
+                    Alert.alert("Error", "No item selected for deletion.");
+                  }
+                }}
+              >
+                <Text style={styles.addButtonText}>Delete</Text>
+              </Pressable>
+            </View>
+          )}
         </View>
       )}
 
-      {/* reminder list */}
       {showlist && (
         <View style={styles.padbot}>
           <FlatList
             data={reminders}
-            renderItem={({ item, index }) => (
+            renderItem={({ item }) => (
               <View style={styles.reminderItem}>
-                {/* {item.id === editingId ? (
-                <TextInput
-                  style={styles.input}
-                  value={editingText}
-                  onChangeText={(text) => setEditingText(text)}
-                  onBlur={() => {
-                    editReminder(item.id, editingText);
-                    setEditingId(null);
+                <Text
+                  style={styles.reminderTitle}
+                  onPress={() => {
+                    setEditingId(item.id);
+                    setSelectedItem(item);
                   }}
-                />
-              ) : ( */}
-                <View>
-                  <Text
-                    style={styles.reminderTitle}
-                    onPress={() => {
-                      setEditingId(item.id);
-                      setEditingText(item.text);
-                    }}
-                  >
-                    {item.title}
-                  </Text>
+                >
+                  {item.title}
+                </Text>
 
-                  <View>
-                    <Text>
-                      🕒{item.time} {"\n"}
-                      🗓️ {item.date}
-                    </Text>
-                  </View>
-                  <Pressable
-                    style={styles.editButton}
-                    onPress={() => {
-                      const params = encodeURIComponent(JSON.stringify(item));
-                      router.push(`/add-new-reminder?editReminder=${params}`);
-                    }}
-                  >
-                    <Text style={styles.editButtonText}>Edit</Text>
-                  </Pressable>
-                </View>
-                {/* )} */}
-
-                {showdelete && (
-                  <Pressable
-                    style={styles.deleteButton}
-                    onPress={() => deleteReminder(index)}
-                  >
-                    <Image
-                      source={require("../../assets/images/removeicon.png")}
-                      style={styles.icon}
-                    />
-                  </Pressable>
-                )}
+                <Text>
+                  🕒{item.time} {"\n"}
+                  🗓️ {item.date}
+                </Text>
+                <Pressable
+                  style={styles.editButton}
+                  onPress={() => {
+                    const params = encodeURIComponent(JSON.stringify(item));
+                    router.push(`/edit-reminder?editReminder=${params}`);
+                  }}
+                >
+                  <Text style={styles.editButtonText}>Edit</Text>
+                </Pressable>
               </View>
             )}
           />
         </View>
       )}
 
-      {/* Calendar modal */}
       <Modal visible={isCalendarVisible} transparent animationType="fade">
         <View style={styles.modalContainer}>
           <Pressable
@@ -326,7 +304,6 @@ const Index = ({
         </View>
       </Modal>
 
-      {/* Time picker modal */}
       <TimePickerModal
         visible={timeModalVisible}
         onDismiss={() => setTimeModalVisible(false)}
