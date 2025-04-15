@@ -146,7 +146,7 @@ const Index = ({
           : reminder
       );
     } else {
-      updatedReminders.push({
+      updatedReminders.push({ 
         title,
         description,
         date: selectedDate,
