@@ -1,6 +1,6 @@
 import { Stack } from "expo-router";
 import * as Notifications from "expo-notifications";
-import { StatusBar } from "expo-status-bar";
+import { StatusBar } from 'expo-status-bar';
 import { useEffect } from "react";
 
 Notifications.setNotificationHandler({
@@ -14,18 +14,15 @@ Notifications.setNotificationHandler({
 export default function Layout() {
   useEffect(() => {
     const requestPermissions = async () => {
-      const { status } = await Notifications.getPermissionsAsync();
+      const { status } = await Notifications.requestPermissionsAsync();
       if (status !== "granted") {
-        const { status: newStatus } =
-          await Notifications.requestPermissionsAsync();
-        if (newStatus !== "granted") {
-          Alert.alert("Permission Required", "Please enable notifications.");
-        }
+        alert("Permission not granted for notifications");
       }
     };
 
     requestPermissions();
   }, []);
+
   return (
     <>
       {/* 👇 Set status bar color and style */}
@@ -39,20 +36,6 @@ export default function Layout() {
           options={{
             headerShown: true,
             title: "Add New Reminder",
-            headerStyle: {
-              backgroundColor: "#06f",
-              borderBottomRightRadius: 30,
-              borderBottomLeftRadius: 30,
-            },
-            headerTintColor: "#fff",
-            headerTitleStyle: { fontWeight: "bold", alignSelf: "center" },
-          }}
-        />
-        <Stack.Screen
-          name="edit-reminder/index"
-          options={{
-            headerShown: true,
-            title: "Edit reminder",
             headerStyle: {
               backgroundColor: "#06f",
               borderBottomRightRadius: 30,
