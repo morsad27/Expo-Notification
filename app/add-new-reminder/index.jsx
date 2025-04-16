@@ -278,6 +278,7 @@ const Index = ({
                     router.push(`/edit-reminder?editReminder=${params}`);
                   }}
                 >
+                  <Text style={styles.editButtonText}>Edit</Text>
                   <Image
                     source={require("../../assets/images/arrow.png")}
                     style={styles.icon}
