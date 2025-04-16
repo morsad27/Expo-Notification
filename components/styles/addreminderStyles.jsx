@@ -149,10 +149,10 @@ export const styles = StyleSheet.create({
     paddingBottom: "30%",
   },
   editButton: {
-    padding: 6,
-    backgroundColor: "#2196F3",
-    borderRadius: 6,
-    marginLeft: 8,
+    padding: 0,
+    // backgroundColor: "#2196F3",
+    // borderRadius: 6,
+    marginRight: -20,
   },
   editButtonText: {
     color: "#fff",
